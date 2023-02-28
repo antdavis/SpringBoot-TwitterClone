@@ -8,17 +8,18 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.cooksys.socialmediaprojectteam4.dtos.ErrorDto;
+import com.cooksys.socialmediaprojectteam4.exceptions.BadRequestException;
 import com.cooksys.socialmediaprojectteam4.exceptions.NotAuthorizedException;
 
 @ControllerAdvice(basePackages = { "com.cooksys.socialmediaprojectteam4.controllers" })
 @ResponseBody
 public class APIControllerAdvice {
 
-//  @ResponseStatus(HttpStatus.BAD_REQUEST)
-//  @ExceptionHandler(BadRequestException.class)
-//  public ErrorDto handleBadRequestException(BadRequestException badRequestException) {
-//      return new ErrorDto(badRequestException.getMessage());
-//  }
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  @ExceptionHandler(BadRequestException.class)
+  public ErrorDto handleBadRequestException(BadRequestException badRequestException) {
+      return new ErrorDto(badRequestException.getMessage());
+  }
 
   @ResponseStatus(HttpStatus.NOT_FOUND)
   @ExceptionHandler(NotFoundException.class)
