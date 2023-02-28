@@ -25,13 +25,6 @@ public class User {
   @GeneratedValue
   private Long id;
 
-  @ManyToMany
-  @JoinTable(name = "followers_following")
-  private Set<User> followers;
-
-  @ManyToMany(mappedBy = "followers")
-  private Set<User> following;
-
   @Embedded
   private Credentials credentials;
 
@@ -42,5 +35,12 @@ public class User {
 
   @Embedded
   private Profile profile;
+
+  @ManyToMany
+  @JoinTable(name = "followers_following")
+  private Set<User> followers;
+
+  @ManyToMany(mappedBy = "followers")
+  private Set<User> following;
 
 }
