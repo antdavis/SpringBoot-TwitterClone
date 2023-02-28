@@ -4,7 +4,7 @@ import org.mapstruct.Mapper;
 
 import com.cooksys.socialmediaprojectteam4.dtos.UserRequestDto;
 import com.cooksys.socialmediaprojectteam4.dtos.UserResponseDto;
-import com.cooksys.socialmediaprojectteam4.entites.User;
+import com.cooksys.socialmediaprojectteam4.entities.User;
 
 @Mapper(componentModel = "spring")
 public interface UserMapper {

@@ -1,4 +1,4 @@
-package com.cooksys.socialmediaprojectteam4.entites;
+package com.cooksys.socialmediaprojectteam4.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -8,15 +8,12 @@ import lombok.Setter;
 @Embeddable
 @Getter
 @Setter
-public class Profile {
+public class Credentials {
 
-  private String firstName;
-
-  private String lastName;
+  @Column(unique = true, nullable = false)
+  private String username;
 
   @Column(nullable = false)
-  private String email;
-
-  private String phone;
+  private String password;
 
 }

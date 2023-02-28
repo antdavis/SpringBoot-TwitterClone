@@ -1,4 +1,4 @@
-package com.cooksys.socialmediaprojectteam4.entites;
+package com.cooksys.socialmediaprojectteam4.entities;
 
 import java.sql.Timestamp;
 import java.util.Set;
