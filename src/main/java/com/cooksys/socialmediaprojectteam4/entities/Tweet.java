@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @Data
-public class Tweet {
+public class Tweet implements Comparable<Tweet> {
 
 	@Id
 	@GeneratedValue
@@ -64,9 +64,9 @@ public class Tweet {
 
 		
 //	Sorts tweets based on their id values with the higher id values appearing first.
-//	   @Override
-//	   public int compareTo(Tweet o) {
-//			return (int) (o.getId() - this.id);
-//	    }	
+	   @Override
+	   public int compareTo(Tweet o) {
+			return (int) (o.getId() - this.id);
+	    }	
 	
 }
