@@ -2,8 +2,8 @@ package com.cooksys.socialmediaprojectteam4.repositories;
 
 import java.sql.Timestamp;
 
-import com.cooksys.socialmediaprojectteam4.entites.Credentials;
-import com.cooksys.socialmediaprojectteam4.entites.Profile;
+import com.cooksys.socialmediaprojectteam4.entities.Credentials;
+import com.cooksys.socialmediaprojectteam4.entities.Profile;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
