@@ -31,7 +31,7 @@ public class User {
   @CreationTimestamp
   private Timestamp joined;
 
-  private Boolean deleted;
+  private boolean deleted = false;
 
   @Embedded
   private Profile profile;
