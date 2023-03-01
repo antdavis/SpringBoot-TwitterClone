@@ -12,7 +12,7 @@ import com.cooksys.socialmediaprojectteam4.dtos.UserRequestDto;
 import com.cooksys.socialmediaprojectteam4.dtos.UserResponseDto;
 import com.cooksys.socialmediaprojectteam4.entities.User;
 import com.cooksys.socialmediaprojectteam4.mappers.UserMapper;
-import com.cooksys.socialmediaprojectteam4.repositories.UserRespository;
+import com.cooksys.socialmediaprojectteam4.repositories.UserRepository;
 import com.cooksys.socialmediaprojectteam4.services.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 
-  private final UserRespository userRepository;
+  private final UserRepository userRepository;
 
   private final UserMapper userMapper;
 //  private final CredentialsMapper credentialsMapper;
