@@ -9,11 +9,11 @@ import com.cooksys.socialmediaprojectteam4.entities.Hashtag;
 
 @Mapper(componentModel = "spring")
 public interface HashtagMapper {
-	
-    HashtagDto entityToDto(Hashtag hashtag);
 
-    List<HashtagDto> entitiesToDtos(List<Hashtag> hashtags);
-    
-    Hashtag stringToEntity(String string);
+  HashtagDto entityToDto(Hashtag hashtag);
+
+  List<HashtagDto> entitiesToDtos(List<Hashtag> hashtags);
+
+  Hashtag stringToEntity(String string);
 
 }

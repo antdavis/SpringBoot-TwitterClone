@@ -12,8 +12,6 @@ import lombok.NoArgsConstructor;
 @Data
 public class UserResponseDto {
 
-  private Long id;
-
   private Credentials credentials;
 
   private Timestamp joined;

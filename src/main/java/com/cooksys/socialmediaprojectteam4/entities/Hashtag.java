@@ -2,7 +2,7 @@ package com.cooksys.socialmediaprojectteam4.entities;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -21,21 +21,21 @@ import lombok.NoArgsConstructor;
 @Data
 public class Hashtag {
 
-    @Id
-    @GeneratedValue
-    private Long id;
-    
-    @Column(unique = true, nullable = false)
-    private String label;
-    
-    @Column(nullable = false)
-    @CreatedDate
-    private Timestamp firstUsed = Timestamp.valueOf(LocalDateTime.now());
-    
-    @Column(nullable = false)
-    @LastModifiedDate
-    private Timestamp lastUsed = Timestamp.valueOf(LocalDateTime.now());
-    
-	@ManyToMany(cascade = CascadeType.ALL)
-	private List<Tweet> tweets;
+  @Id
+  @GeneratedValue
+  private Long id;
+
+  @Column(unique = true, nullable = false)
+  private String label;
+
+  @Column(nullable = false)
+  @CreatedDate
+  private Timestamp firstUsed = Timestamp.valueOf(LocalDateTime.now());
+
+  @Column(nullable = false)
+  @LastModifiedDate
+  private Timestamp lastUsed = Timestamp.valueOf(LocalDateTime.now());
+
+  @ManyToMany(mappedBy = "hashtags", cascade = CascadeType.ALL)
+  private Set<Tweet> tweets;
 }

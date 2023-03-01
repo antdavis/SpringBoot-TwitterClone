@@ -18,7 +18,7 @@ public class APIControllerAdvice {
   @ResponseStatus(HttpStatus.BAD_REQUEST)
   @ExceptionHandler(BadRequestException.class)
   public ErrorDto handleBadRequestException(BadRequestException badRequestException) {
-      return new ErrorDto(badRequestException.getMessage());
+    return new ErrorDto(badRequestException.getMessage());
   }
 
   @ResponseStatus(HttpStatus.NOT_FOUND)
