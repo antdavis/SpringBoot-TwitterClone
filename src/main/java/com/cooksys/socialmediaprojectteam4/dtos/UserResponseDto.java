@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Data
 public class UserResponseDto {
 
-  private CredentialsDto username;
+  private String username;
 
   private Timestamp joined;
 
