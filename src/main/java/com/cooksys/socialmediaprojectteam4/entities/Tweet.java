@@ -29,7 +29,8 @@ public class Tweet implements Comparable<Tweet> {
   private Long id;
 
 //setting up relations with User for FK author
-  @ManyToOne(cascade = CascadeType.ALL)
+//  @ManyToOne(cascade = CascadeType.ALL)
+  @ManyToOne
   @JoinColumn(name = "author")
   private User author;
 
@@ -41,17 +42,17 @@ public class Tweet implements Comparable<Tweet> {
   private String content;
 
   // setting up one-many relationship for inReplyTo
-  @ManyToOne(optional = true)
+  @ManyToOne(optional = true, cascade = CascadeType.ALL)
   private Tweet inReplyTo;
 
   @OneToMany(mappedBy = "inReplyTo")
   private List<Tweet> replies = new ArrayList<>();
 
   // setting up one-many relationship for repostOf
-  @ManyToOne(optional = true)
+  @ManyToOne(optional = true, cascade = CascadeType.ALL)
   private Tweet repostOf;
 
-  @OneToMany(mappedBy = "repostOf", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "repostOf")
   private Set<Tweet> reposts;
 
   // setting up relationship with User for user_mentions
@@ -63,7 +64,8 @@ public class Tweet implements Comparable<Tweet> {
   private Set<User> likes;
 
   // setting up relationship with HastTag for tweet_hashtags
-  @ManyToMany(cascade = CascadeType.ALL)
+//  @ManyToMany(cascade = CascadeType.ALL)
+  @ManyToMany
   @JoinTable(name = "tweet_hashtags", joinColumns = @JoinColumn(name = "tweet_id"), inverseJoinColumns = @JoinColumn(name = "hashtag_id"))
   private Set<Hashtag> hashtags;
 

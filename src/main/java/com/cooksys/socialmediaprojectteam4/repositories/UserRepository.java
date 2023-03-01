@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import com.cooksys.socialmediaprojectteam4.entities.User;
 
 @Repository
-public interface UserRespository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Long> {
 
   List<User> findAllByDeletedFalse();
 }
