@@ -1,5 +1,7 @@
 package com.cooksys.socialmediaprojectteam4.services.impl;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -10,34 +12,84 @@ import com.cooksys.socialmediaprojectteam4.dtos.HashtagDto;
 import com.cooksys.socialmediaprojectteam4.dtos.TweetRequestDto;
 import com.cooksys.socialmediaprojectteam4.dtos.TweetResponseDto;
 import com.cooksys.socialmediaprojectteam4.dtos.UserResponseDto;
+import com.cooksys.socialmediaprojectteam4.entities.Credentials;
+import com.cooksys.socialmediaprojectteam4.entities.Tweet;
+import com.cooksys.socialmediaprojectteam4.entities.User;
+import com.cooksys.socialmediaprojectteam4.exceptions.BadRequestException;
+import com.cooksys.socialmediaprojectteam4.exceptions.NotAuthorizedException;
+import com.cooksys.socialmediaprojectteam4.exceptions.NotFoundException;
+import com.cooksys.socialmediaprojectteam4.mappers.TweetMapper;
+import com.cooksys.socialmediaprojectteam4.repositories.TweetRepository;
 import com.cooksys.socialmediaprojectteam4.services.TweetService;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
-public class TweetServiceImpl implements TweetService {@Override
+public class TweetServiceImpl implements TweetService {
+	
+	private final TweetRepository tweetRepository;
+	private final TweetMapper tweetMapper;
+	
+	
+	public Tweet getTweet(Long id) {
+		if (tweetRepository.findByIdAndDeletedFalse(id).isEmpty()) {
+			throw new NotFoundException("Tweet with ID " + id + " does not exist.");
+		}
+		return tweetRepository.findByIdAndDeletedFalse(id).get();
+	}
+	
+	public void matchesCredentials(User databaseCredentials, CredentialsDto credentialsDto) {
+		if (credentialsDto == null)
+			throw new NotAuthorizedException("Credentials must be provided!");
+		if (!databaseCredentials.getCredentials().getUsername().equalsIgnoreCase(credentialsDto.getUsername())
+				|| !databaseCredentials.getCredentials().getPassword().equals(credentialsDto.getPassword())) {
+			throw new NotAuthorizedException("Credentials do not match!");
+		}
+	}
+	
+	@Override
 	public List<TweetResponseDto> getAllTweets() {
-		// TODO Auto-generated method stub
-		return null;
+		List<Tweet> tweets = tweetRepository.findAllByDeletedFalse();
+		Collections.sort(tweets);
+		return tweetMapper.entitiesToDtos(tweets);
 	}
 
 	@Override
 	public TweetResponseDto getTweetById(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		return tweetMapper.entityToDto(getTweet(id));
 	}
 
 	@Override
 	public TweetResponseDto createTweet(TweetRequestDto tweetRequestDto) {
-		// TODO Auto-generated method stub
+//		Checks if tweet is empty
+		if (tweetRequestDto.getContent() == null || tweetRequestDto.getContent().isEmpty() 
+				|| tweetRequestDto.getContent().isBlank()) {
+			throw new BadRequestException("Tweet cannot be empty!");
+		}
+//		Checks if username and password field is empty
+		if (tweetRequestDto.getCredentials() == null) {
+			throw new BadRequestException("Username and password is required!");
+		}
+		if (tweetRequestDto.getCredentials().getUsername() == null) {
+			throw new BadRequestException("Username is required!");
+		}
+		if (tweetRequestDto.getCredentials().getPassword() == null) {
+			throw new BadRequestException("Password is required!");
+		}
+//		Checks if username and password match
+//		if () {
+//			throw new NotAuthorizedException("Your credentials do not match.");
+//		}
+		
 		return null;
 	}
 
 	@Override
 	public TweetResponseDto deleteTweet(Long id, CredentialsDto credentialsDto) {
-		// TODO Auto-generated method stub
-		return null;
+		matchesCredentials(getTweet(id).getAuthor(), credentialsDto);
+		getTweet(id).setDeleted(true);
+		return tweetMapper.entityToDto(tweetRepository.saveAndFlush(getTweet(id)));
 	}
 
 	@Override
@@ -72,8 +124,27 @@ public class TweetServiceImpl implements TweetService {@Override
 
 	@Override
 	public ContextDto getTweetContext(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		
+//		Holds context info
+		ContextDto context = new ContextDto();
+//		Gets tweet and parent/child tweet
+		Tweet inReplyTo = getTweet(id).getInReplyTo();
+		List<Tweet> replies = getTweet(id).getReplies();
+		List<Tweet> listOfInReplyTo = new ArrayList<>();
+//		Add tweet's parent tweet to list and continues to add to list until no more parent tweets 
+		while (inReplyTo != null) {
+			listOfInReplyTo.add(inReplyTo);
+			inReplyTo = inReplyTo.getInReplyTo();
+		}
+//		Removes deleted tweets
+		listOfInReplyTo.removeIf(Tweet::isDeleted);
+		replies.removeIf(Tweet::isDeleted);
+//		Set mapped tweet as target, parents as before, and after as list
+		context.setTarget(tweetMapper.entityToDto(getTweet(id)));
+		context.setBefore(tweetMapper.entitiesToDtos(listOfInReplyTo));
+		context.setAfter(tweetMapper.entitiesToDtos(replies));
+
+		return context;
 	}
 
 	@Override
