@@ -1,7 +1,5 @@
 package com.cooksys.socialmediaprojectteam4.dtos;
 
-import java.sql.Timestamp;
-
 import com.cooksys.socialmediaprojectteam4.entities.Credentials;
 import com.cooksys.socialmediaprojectteam4.entities.Profile;
 
@@ -13,8 +11,6 @@ import lombok.NoArgsConstructor;
 public class UserRequestDto {
 
   private Credentials credentials;
-
-  private Timestamp joined;
 
   private Profile profile;
 }
