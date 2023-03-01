@@ -47,7 +47,6 @@ public class User {
   private List<Tweet> tweets = new ArrayList<>();
 
   // setting up the relationships for followers_following
-//  @ManyToMany(cascade = CascadeType.ALL)
   @EqualsAndHashCode.Exclude
   @ManyToMany
   @JoinTable(name = "followers_following", joinColumns = @JoinColumn(name = "follower_id"), inverseJoinColumns = @JoinColumn(name = "following_id"))
@@ -58,14 +57,12 @@ public class User {
   private Set<User> following;
 
   // setting up the relationship with Tweet for user_likes
-//  @ManyToMany(cascade = CascadeType.ALL)
   @EqualsAndHashCode.Exclude
   @ManyToMany
   @JoinTable(name = "user_likes", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "tweet_id"))
   private Set<Tweet> userLikes;
 
   // setting up the relationship with Tweet for user_mentions
-//  @ManyToMany(cascade = CascadeType.ALL)
   @EqualsAndHashCode.Exclude
   @ManyToMany
   @JoinTable(name = "user_mentions", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "tweet_id"))

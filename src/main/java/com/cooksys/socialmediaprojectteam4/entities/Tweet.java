@@ -7,7 +7,6 @@ import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -17,6 +16,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
@@ -42,14 +42,16 @@ public class Tweet implements Comparable<Tweet> {
   private String content;
 
   // setting up one-many relationship for inReplyTo
-  @ManyToOne(optional = true, cascade = CascadeType.ALL)
+//  @ManyToOne(optional = true, cascade = CascadeType.ALL)
+  @ManyToOne(optional = true)
   private Tweet inReplyTo;
 
   @OneToMany(mappedBy = "inReplyTo")
   private List<Tweet> replies = new ArrayList<>();
 
   // setting up one-many relationship for repostOf
-  @ManyToOne(optional = true, cascade = CascadeType.ALL)
+//  @ManyToOne(optional = true, cascade = CascadeType.ALL)
+  @ManyToOne(optional = true)
   private Tweet repostOf;
 
   @OneToMany(mappedBy = "repostOf")
@@ -65,6 +67,7 @@ public class Tweet implements Comparable<Tweet> {
 
   // setting up relationship with HastTag for tweet_hashtags
 //  @ManyToMany(cascade = CascadeType.ALL)
+  @EqualsAndHashCode.Exclude
   @ManyToMany
   @JoinTable(name = "tweet_hashtags", joinColumns = @JoinColumn(name = "tweet_id"), inverseJoinColumns = @JoinColumn(name = "hashtag_id"))
   private Set<Hashtag> hashtags;
