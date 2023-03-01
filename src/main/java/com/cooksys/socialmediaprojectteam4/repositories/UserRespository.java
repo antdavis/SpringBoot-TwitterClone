@@ -1,24 +1,14 @@
 package com.cooksys.socialmediaprojectteam4.repositories;
 
-import java.sql.Timestamp;
+import java.util.List;
 
-import com.cooksys.socialmediaprojectteam4.entities.Credentials;
-import com.cooksys.socialmediaprojectteam4.entities.Profile;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.cooksys.socialmediaprojectteam4.entities.User;
 
-@NoArgsConstructor
-@Data
-public class UserRespository {
+@Repository
+public interface UserRespository extends JpaRepository<User, Long> {
 
-  private Long id;
-
-  private Credentials credentials;
-
-  private Timestamp joined;
-
-  private Boolean deleted;
-
-  private Profile profile;
+  List<User> findAllByDeletedFalse();
 }

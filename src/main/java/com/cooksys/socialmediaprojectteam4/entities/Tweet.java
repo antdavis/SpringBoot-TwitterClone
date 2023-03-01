@@ -29,7 +29,7 @@ public class Tweet implements Comparable<Tweet> {
   private Long id;
 
 //setting up relations with User for FK author
-  @ManyToOne
+  @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "author")
   private User author;
 
@@ -44,7 +44,7 @@ public class Tweet implements Comparable<Tweet> {
   @ManyToOne(optional = true)
   private Tweet inReplyTo;
 
-  @OneToMany(mappedBy = "inReplyTo", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "inReplyTo")
   private List<Tweet> replies = new ArrayList<>();
 
   // setting up one-many relationship for repostOf
@@ -55,16 +55,16 @@ public class Tweet implements Comparable<Tweet> {
   private Set<Tweet> reposts;
 
   // setting up relationship with User for user_mentions
-  @ManyToMany(mappedBy = "userMentions", cascade = CascadeType.ALL)
+  @ManyToMany(mappedBy = "userMentions")
   private Set<User> mentionedUsers;
 
   // setting up relationship with User for user_likes
-  @ManyToMany(mappedBy = "userLikes", cascade = CascadeType.ALL)
+  @ManyToMany(mappedBy = "userLikes")
   private Set<User> likes;
 
   // setting up relationship with HastTag for tweet_hashtags
-  @ManyToMany(cascade = CascadeType.MERGE)
-  @JoinTable(name = "tweet_hashtags", joinColumns = @JoinColumn(name = "tweet"), inverseJoinColumns = @JoinColumn(name = "hashtag"))
+  @ManyToMany(cascade = CascadeType.ALL)
+  @JoinTable(name = "tweet_hashtags", joinColumns = @JoinColumn(name = "tweet_id"), inverseJoinColumns = @JoinColumn(name = "hashtag_id"))
   private Set<Hashtag> hashtags;
 
 //	Sorts tweets based on their id values with the higher id values appearing first.

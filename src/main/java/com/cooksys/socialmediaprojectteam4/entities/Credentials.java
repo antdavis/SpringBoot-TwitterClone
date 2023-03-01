@@ -13,7 +13,6 @@ public class Credentials {
   @Column(unique = true, nullable = false)
   private String username;
 
-  @Column(nullable = false)
   private String password;
 
 }
