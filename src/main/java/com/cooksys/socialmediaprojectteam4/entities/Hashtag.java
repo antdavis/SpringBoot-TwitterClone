@@ -7,7 +7,6 @@ import java.util.Set;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -36,6 +35,6 @@ public class Hashtag {
   @LastModifiedDate
   private Timestamp lastUsed = Timestamp.valueOf(LocalDateTime.now());
 
-  @ManyToMany(mappedBy = "hashtags", cascade = CascadeType.ALL)
+  @ManyToMany(mappedBy = "hashtags")
   private Set<Tweet> tweets;
 }

@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -45,21 +46,21 @@ public class User {
   private List<Tweet> tweets = new ArrayList<>();
 
   // setting up the relationships for followers_following
-  @ManyToMany
+  @ManyToMany(cascade = CascadeType.ALL)
   @JoinTable(name = "followers_following")
-  private Set<User> followers;
+  private Set<User> follower;
 
-  @ManyToMany(mappedBy = "followers")
+  @ManyToMany(mappedBy = "follower")
   private Set<User> following;
 
   // setting up the relationship with Tweet for user_likes
-  @ManyToMany
-  @JoinTable(name = "user_likes", joinColumns = @JoinColumn(name = "user"), inverseJoinColumns = @JoinColumn(name = "tweet"))
+  @ManyToMany(cascade = CascadeType.ALL)
+  @JoinTable(name = "user_likes", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "tweet_id"))
   private Set<User> userLikes;
 
   // setting up the relationship with Tweet for user_mentions
-  @ManyToMany
-  @JoinTable(name = "user_mentions", joinColumns = @JoinColumn(name = "user"), inverseJoinColumns = @JoinColumn(name = "tweet"))
+  @ManyToMany(cascade = CascadeType.ALL)
+  @JoinTable(name = "user_mentions", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "tweet_id"))
   private Set<User> userMentions;
 
 }
