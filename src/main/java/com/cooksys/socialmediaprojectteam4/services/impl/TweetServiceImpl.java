@@ -23,6 +23,7 @@ import com.cooksys.socialmediaprojectteam4.exceptions.NotFoundException;
 import com.cooksys.socialmediaprojectteam4.mappers.HashtagMapper;
 import com.cooksys.socialmediaprojectteam4.mappers.TweetMapper;
 import com.cooksys.socialmediaprojectteam4.mappers.UserMapper;
+import com.cooksys.socialmediaprojectteam4.repositories.HashtagRepository;
 import com.cooksys.socialmediaprojectteam4.repositories.TweetRepository;
 import com.cooksys.socialmediaprojectteam4.services.TweetService;
 
@@ -45,7 +46,7 @@ public class TweetServiceImpl implements TweetService {
 		return tweetRepository.findByIdAndDeletedFalse(id).get();
 	}
 	
-	public void matchesCredentials(User databaseCredentials, CredentialsDto credentialsDto) {
+	public void validateCredentials(User databaseCredentials, CredentialsDto credentialsDto) {
 		if (credentialsDto == null)
 			throw new NotAuthorizedException("Credentials must be provided!");
 		if (!databaseCredentials.getCredentials().getUsername().equalsIgnoreCase(credentialsDto.getUsername())
@@ -93,7 +94,7 @@ public class TweetServiceImpl implements TweetService {
 
 	@Override
 	public TweetResponseDto deleteTweet(Long id, CredentialsDto credentialsDto) {
-		matchesCredentials(getTweet(id).getAuthor(), credentialsDto);
+		validateCredentials(getTweet(id).getAuthor(), credentialsDto);
 		getTweet(id).setDeleted(true);
 		return tweetMapper.entityToDto(tweetRepository.saveAndFlush(getTweet(id)));
 	}
@@ -149,7 +150,7 @@ public class TweetServiceImpl implements TweetService {
 //		Removes deleted tweets
 		listOfInReplyTo.removeIf(Tweet::isDeleted);
 		replies.removeIf(Tweet::isDeleted);
-//		Set mapped tweet as target, parents as before, and after as list
+//		Set mapped Tweet as target, Parents as before, and List as after
 		context.setTarget(tweetMapper.entityToDto(getTweet(id)));
 		context.setBefore(tweetMapper.entitiesToDtos(listOfInReplyTo));
 		context.setAfter(tweetMapper.entitiesToDtos(replies));
