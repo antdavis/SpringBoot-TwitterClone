@@ -18,7 +18,9 @@ import com.cooksys.socialmediaprojectteam4.entities.User;
 import com.cooksys.socialmediaprojectteam4.exceptions.BadRequestException;
 import com.cooksys.socialmediaprojectteam4.exceptions.NotAuthorizedException;
 import com.cooksys.socialmediaprojectteam4.exceptions.NotFoundException;
+import com.cooksys.socialmediaprojectteam4.mappers.HashtagMapper;
 import com.cooksys.socialmediaprojectteam4.mappers.TweetMapper;
+import com.cooksys.socialmediaprojectteam4.mappers.UserMapper;
 import com.cooksys.socialmediaprojectteam4.repositories.TweetRepository;
 import com.cooksys.socialmediaprojectteam4.services.TweetService;
 
@@ -30,6 +32,8 @@ public class TweetServiceImpl implements TweetService {
 	
 	private final TweetRepository tweetRepository;
 	private final TweetMapper tweetMapper;
+	private final HashtagMapper hashtagMapper;
+	private final UserMapper userMapper;
 	
 	
 	public Tweet getTweet(Long id) {
@@ -112,14 +116,16 @@ public class TweetServiceImpl implements TweetService {
 
 	@Override
 	public List<HashtagDto> getTweetHashtags(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		return hashtagMapper.entitiesToDtos(getTweet(id).getHashtags());
 	}
 
 	@Override
 	public List<UserResponseDto> getTweetLikes(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+//		Get list of users who have liked the tweet
+		List<User> likes = getTweet(id).getLikes();
+//		If deleted remove user from list
+		likes.removeIf(User::isDeleted);
+		return userMapper.entitiesToDtos(likes);
 	}
 
 	@Override
@@ -155,8 +161,13 @@ public class TweetServiceImpl implements TweetService {
 
 	@Override
 	public List<TweetResponseDto> getTweetReposts(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+//		Get list of tweets that have been reposted
+		List<Tweet> reposts = getTweet(id).getReposts();
+//		Sorts list in order based on compareTo method created in Tweet entity class
+		Collections.sort(reposts);
+//		If deleted remove tweet from list
+		reposts.removeIf(Tweet::isDeleted); 
+		return tweetMapper.entitiesToDtos(reposts);
 	}
 
 	@Override

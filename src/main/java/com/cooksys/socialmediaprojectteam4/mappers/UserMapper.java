@@ -1,5 +1,7 @@
 package com.cooksys.socialmediaprojectteam4.mappers;
 
+import java.util.List;
+
 import org.mapstruct.Mapper;
 
 import com.cooksys.socialmediaprojectteam4.dtos.UserRequestDto;
@@ -14,4 +16,6 @@ public interface UserMapper {
 
 //  @Mapping(target = "username", source = "credentials.username")
   UserResponseDto entityToDto(User entity);
+
+  List<UserResponseDto> entitiesToDtos(List<User> users);
 }
