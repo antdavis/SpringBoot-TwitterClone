@@ -3,6 +3,7 @@ package com.cooksys.socialmediaprojectteam4.services.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import com.cooksys.socialmediaprojectteam4.dtos.TweetRequestDto;
 import com.cooksys.socialmediaprojectteam4.dtos.TweetResponseDto;
 import com.cooksys.socialmediaprojectteam4.dtos.UserResponseDto;
 import com.cooksys.socialmediaprojectteam4.entities.Credentials;
+import com.cooksys.socialmediaprojectteam4.entities.Hashtag;
 import com.cooksys.socialmediaprojectteam4.entities.Tweet;
 import com.cooksys.socialmediaprojectteam4.entities.User;
 import com.cooksys.socialmediaprojectteam4.exceptions.BadRequestException;
@@ -116,13 +118,15 @@ public class TweetServiceImpl implements TweetService {
 
 	@Override
 	public List<HashtagDto> getTweetHashtags(Long id) {
-		return hashtagMapper.entitiesToDtos(getTweet(id).getHashtags());
+	    Set<Hashtag> hashtags = getTweet(id).getHashtags();
+	    List<Hashtag> hashtagList = new ArrayList<>(hashtags);
+	    return hashtagMapper.entitiesToDtos(hashtagList);
 	}
 
 	@Override
 	public List<UserResponseDto> getTweetLikes(Long id) {
 //		Get list of users who have liked the tweet
-		List<User> likes = getTweet(id).getLikes();
+		List<User> likes = new ArrayList<>(getTweet(id).getLikes());
 //		If deleted remove user from list
 		likes.removeIf(User::isDeleted);
 		return userMapper.entitiesToDtos(likes);
@@ -162,7 +166,7 @@ public class TweetServiceImpl implements TweetService {
 	@Override
 	public List<TweetResponseDto> getTweetReposts(Long id) {
 //		Get list of tweets that have been reposted
-		List<Tweet> reposts = getTweet(id).getReposts();
+		List<Tweet> reposts = new ArrayList<>(getTweet(id).getReposts());
 //		Sorts list in order based on compareTo method created in Tweet entity class
 		Collections.sort(reposts);
 //		If deleted remove tweet from list
