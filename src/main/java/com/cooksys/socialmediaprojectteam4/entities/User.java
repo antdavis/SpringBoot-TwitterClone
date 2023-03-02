@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -24,6 +27,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "user_table")
 @NoArgsConstructor
 @Data
+@FilterDef(name = "deletedUserFilter", parameters = @ParamDef(name = "isDeleted", type = org.hibernate.type.descriptor.java.BooleanJavaType.class))
+@Filter(name = "deletedUserFilter", condition = "deleted = :isDeleted")
 public class User {
 
   @Id
@@ -36,7 +41,7 @@ public class User {
   @CreationTimestamp
   private Timestamp joined;
 
-  private boolean deleted = false;
+  private boolean deleted = Boolean.FALSE;
 
   @Embedded
   private Profile profile;
