@@ -183,14 +183,31 @@ public class TweetServiceImpl implements TweetService {
 
 	@Override
 	public void likeTweet(Long id, CredentialsDto credentialsDto) {
-		// TODO Auto-generated method stub
-		
+		Tweet tweetToBeLiked = getTweet(id);
+		User user = userService.getUserByCredentials(credentialsDto);
+//		If tweet alrdy liked by user, returns without doing anything
+		if (tweetToBeLiked.getLikes().contains(user))
+			return;
+		validateCredentials(user, credentialsDto);
+//		Adds user to "liked" list of the tweet
+		tweetToBeLiked.getLikes().add(user);
+//		Adds liked tweet to the user's list of liked tweets
+		user.getUserLikes().add(tweetToBeLiked);
+//		Saves and updates tweet and user obj 
+		tweetRepository.saveAndFlush(tweetToBeLiked);
+		userRepository.saveAndFlush(user);
 	}
 
 	@Override
 	public TweetResponseDto replyToTweet(Long id, TweetRequestDto tweetRequestDto) {
-		// TODO Auto-generated method stub
-		return null;
+		Tweet tweetResponseToExistingTweet = getTweet(createTweet(tweetRequestDto).getId());
+		Tweet tweetBeingRepliedTo = getTweet(id);
+
+		tweetResponseToExistingTweet.setInReplyTo(tweetBeingRepliedTo);
+		tweetBeingRepliedTo.getReplies().add(tweetResponseToExistingTweet);
+
+		tweetRepository.saveAndFlush(tweetBeingRepliedTo);
+		return tweetMapper.entityToDto(tweetRepository.saveAndFlush(tweetResponseToExistingTweet));
 	}
 
 	@Override
