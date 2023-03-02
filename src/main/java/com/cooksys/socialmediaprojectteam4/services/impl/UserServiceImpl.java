@@ -12,7 +12,6 @@ import com.cooksys.socialmediaprojectteam4.dtos.UserResponseDto;
 import com.cooksys.socialmediaprojectteam4.entities.User;
 import com.cooksys.socialmediaprojectteam4.exceptions.BadRequestException;
 import com.cooksys.socialmediaprojectteam4.exceptions.NotAuthorizedException;
-
 import com.cooksys.socialmediaprojectteam4.exceptions.NotFoundException;
 import com.cooksys.socialmediaprojectteam4.mappers.UserMapper;
 import com.cooksys.socialmediaprojectteam4.repositories.UserRepository;
@@ -34,37 +33,45 @@ public class UserServiceImpl implements UserService {
     Optional<User> optionalUser = userRepository.findByUsername(username);
     if (optionalUser.isEmpty())
       throw new NotFoundException("User doesn't exist.");
-  
-  
-  
-  
+
+    return optionalUser.get();
+  }
+
   public User getUserByCredentials(CredentialsDto credentialsDto) {
-	return getUserByUsernameReturnUserEntity(credentialsDto.getUsername());
-	}
+    return getUserByUsernameReturnUserEntity(credentialsDto.getUsername());
+  }
 
   public User getUserByUsernameReturnUserEntity(String username) {
-	Optional<User> optionalUser = userRepository.findByCredentialsUsername(username);
-	if (optionalUser.isEmpty() || optionalUser.get().isDeleted()) {
-		throw new NotFoundException("User with username: " + username + "not found");
-	}
-		return optionalUser.get();
-	} 
-  
-  
+    Optional<User> optionalUser = userRepository.findByCredentialsUsername(username);
+    if (optionalUser.isEmpty() || optionalUser.get().isDeleted()) {
+      throw new NotFoundException("User with username: " + username + "not found");
+    }
+    return optionalUser.get();
+  }
+
   // Get all active (non-deleted) users as an array
   @Override
   public List<UserResponseDto> getAllUsers() {
     return userMapper.entitiesToDtos(userRepository.findAllByDeletedFalse());
   }
 
+  // create new user
   @Override
   public UserResponseDto createUser(UserRequestDto userRequestDto) {
+    validateUserRequest(userRequestDto);
     User user = userMapper.userRequestDtoToEntity(userRequestDto);
+    if (userRepository.existsByCredentialsUsername(user.getCredentials().getUsername())) {
+      validateCredentials(userRequestDto.getCredentials(), user);
+//      if(user.isDeleted()) {
+      user.setDeleted(false);
+//      }
+//      else
+      throw new NotAuthorizedException("Don't have authorization");
+    }
 //    user.setCredentials(user.getProfile());
 //    user.setProfile(user.getProfile());
 
-
-    return optionalUser.get();
+    return userMapper.userEntityToDto(userRepository.saveAndFlush(user));
   }
 
   // validate the credentials of the user
@@ -93,32 +100,6 @@ public class UserServiceImpl implements UserService {
       throw new BadRequestException("Credentials missing!");
   }
 
-  
-  // Get all active (non-deleted) users as an array
-  @Override
-  public List<UserResponseDto> getAllUsers() {
-    return userMapper.entitiesToDtos(userRepository.findAllByDeletedFalse());
-  }
-
-  // create new user
-  @Override
-  public UserResponseDto createUser(UserRequestDto userRequestDto) {
-    validateUserRequest(userRequestDto);
-    User user = userMapper.userRequestDtoToEntity(userRequestDto);
-    if(userRepository.existsByCredentialsUsername(user.getCredentials().getUsername())) {
-      validateCredentials(userRequestDto.getCredentials(), user);
-//      if(user.isDeleted()) {
-        user.setDeleted(false);
-//      }
-//      else
-        throw new NotAuthorizedException("Don't have authorization");
-    }
-//    user.setCredentials(user.getProfile());
-//    user.setProfile(user.getProfile());
-
-    return userMapper.userEntityToDto(userRepository.saveAndFlush(user));
-  }
-
   // get us
   @Override
   public UserResponseDto getUserByUsername(String username) {
@@ -144,7 +125,5 @@ public class UserServiceImpl implements UserService {
     userToDelete.setDeleted(true);
     return userMapper.userEntityToDto(userRepository.saveAndFlush(userToDelete));
   }
-
-
 
 }
