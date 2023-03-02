@@ -59,7 +59,7 @@ public class Tweet implements Comparable<Tweet> {
 
   // setting up relationship with User for user_mentions
   @ManyToMany(mappedBy = "userMentions")
-  private Set<User> mentionedUsers;
+  private List<User> mentionedUsers = new ArrayList<>();
 
   // setting up relationship with User for user_likes
   @ManyToMany(mappedBy = "userLikes")

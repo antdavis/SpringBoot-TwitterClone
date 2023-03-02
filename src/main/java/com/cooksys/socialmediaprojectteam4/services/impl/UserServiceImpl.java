@@ -11,6 +11,7 @@ import com.cooksys.socialmediaprojectteam4.dtos.TweetResponseDto;
 import com.cooksys.socialmediaprojectteam4.dtos.UserRequestDto;
 import com.cooksys.socialmediaprojectteam4.dtos.UserResponseDto;
 import com.cooksys.socialmediaprojectteam4.entities.User;
+import com.cooksys.socialmediaprojectteam4.exceptions.NotFoundException;
 import com.cooksys.socialmediaprojectteam4.mappers.UserMapper;
 import com.cooksys.socialmediaprojectteam4.repositories.UserRepository;
 import com.cooksys.socialmediaprojectteam4.services.UserService;
@@ -25,7 +26,23 @@ public class UserServiceImpl implements UserService {
 
   private final UserMapper userMapper;
 //  private final CredentialsMapper credentialsMapper;
+  
+  
+  
+  
+  public User getUserByCredentials(CredentialsDto credentialsDto) {
+	return getUserByUsernameReturnUserEntity(credentialsDto.getUsername());
+	}
 
+  public User getUserByUsernameReturnUserEntity(String username) {
+	Optional<User> optionalUser = userRepository.findByCredentialsUsername(username);
+	if (optionalUser.isEmpty() || optionalUser.get().isDeleted()) {
+		throw new NotFoundException("User with username: " + username + "not found");
+	}
+		return optionalUser.get();
+	} 
+  
+  
   // Get all active (non-deleted) users as an array
   @Override
   public List<UserResponseDto> getAllUsers() {
@@ -100,5 +117,7 @@ public class UserServiceImpl implements UserService {
     // TODO Auto-generated method stub
     return null;
   }
+
+
 
 }

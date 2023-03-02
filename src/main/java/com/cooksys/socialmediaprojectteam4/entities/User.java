@@ -66,6 +66,6 @@ public class User {
   @EqualsAndHashCode.Exclude
   @ManyToMany
   @JoinTable(name = "user_mentions", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "tweet_id"))
-  private Set<Tweet> userMentions;
+  private List<Tweet> userMentions = new ArrayList<>();
 
 }
