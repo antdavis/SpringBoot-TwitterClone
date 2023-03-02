@@ -2,6 +2,7 @@ package com.cooksys.socialmediaprojectteam4.services.impl;
 
 import org.springframework.stereotype.Service;
 
+import com.cooksys.socialmediaprojectteam4.repositories.HashtagRepository;
 import com.cooksys.socialmediaprojectteam4.repositories.UserRepository;
 import com.cooksys.socialmediaprojectteam4.services.ValidateService;
 
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 public class ValidateServiceImpl implements ValidateService {
 
   private final UserRepository userRepository;
+  private final HashtagRepository hashtagRepository;
 
 //  private final UserMapper userMapper;
 
@@ -24,5 +26,10 @@ public class ValidateServiceImpl implements ValidateService {
   public boolean usernameAvailable(String username) {
     return !userRepository.existsByCredentialsUsername(username);
   }
+  
+  @Override
+  public boolean hashtagExists(String label) {
+	return hashtagRepository.findByLabel(label).isPresent();
+}  
 
 }

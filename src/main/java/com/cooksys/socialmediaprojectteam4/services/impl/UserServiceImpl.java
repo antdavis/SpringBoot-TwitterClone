@@ -12,6 +12,7 @@ import com.cooksys.socialmediaprojectteam4.dtos.UserResponseDto;
 import com.cooksys.socialmediaprojectteam4.entities.User;
 import com.cooksys.socialmediaprojectteam4.exceptions.BadRequestException;
 import com.cooksys.socialmediaprojectteam4.exceptions.NotAuthorizedException;
+
 import com.cooksys.socialmediaprojectteam4.exceptions.NotFoundException;
 import com.cooksys.socialmediaprojectteam4.mappers.UserMapper;
 import com.cooksys.socialmediaprojectteam4.repositories.UserRepository;
@@ -33,6 +34,35 @@ public class UserServiceImpl implements UserService {
     Optional<User> optionalUser = userRepository.findByUsername(username);
     if (optionalUser.isEmpty())
       throw new NotFoundException("User doesn't exist.");
+  
+  
+  
+  
+  public User getUserByCredentials(CredentialsDto credentialsDto) {
+	return getUserByUsernameReturnUserEntity(credentialsDto.getUsername());
+	}
+
+  public User getUserByUsernameReturnUserEntity(String username) {
+	Optional<User> optionalUser = userRepository.findByCredentialsUsername(username);
+	if (optionalUser.isEmpty() || optionalUser.get().isDeleted()) {
+		throw new NotFoundException("User with username: " + username + "not found");
+	}
+		return optionalUser.get();
+	} 
+  
+  
+  // Get all active (non-deleted) users as an array
+  @Override
+  public List<UserResponseDto> getAllUsers() {
+    return userMapper.entitiesToDtos(userRepository.findAllByDeletedFalse());
+  }
+
+  @Override
+  public UserResponseDto createUser(UserRequestDto userRequestDto) {
+    User user = userMapper.userRequestDtoToEntity(userRequestDto);
+//    user.setCredentials(user.getProfile());
+//    user.setProfile(user.getProfile());
+
 
     return optionalUser.get();
   }
@@ -114,5 +144,7 @@ public class UserServiceImpl implements UserService {
     userToDelete.setDeleted(true);
     return userMapper.userEntityToDto(userRepository.saveAndFlush(userToDelete));
   }
+
+
 
 }

@@ -2,6 +2,8 @@ package com.cooksys.socialmediaprojectteam4.entities;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.data.annotation.CreatedDate;
@@ -36,5 +38,5 @@ public class Hashtag {
   private Timestamp lastUsed = Timestamp.valueOf(LocalDateTime.now());
 
   @ManyToMany(mappedBy = "hashtags")
-  private Set<Tweet> tweets;
+  private List<Tweet> tweets = new ArrayList<>();
 }

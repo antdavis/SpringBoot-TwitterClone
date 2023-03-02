@@ -6,7 +6,7 @@ import com.cooksys.socialmediaprojectteam4.dtos.HashtagDto;
 import com.cooksys.socialmediaprojectteam4.dtos.TweetResponseDto;
 
 public interface HashtagService {
-    List<HashtagDto> getAllHashtags();
+	List<HashtagDto> getAllHashtags();
 
     List<TweetResponseDto> getTweetsWithHashtag(String label);
 }

@@ -16,6 +16,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
   List<User> findAllByDeletedFalse();
 
   boolean existsByCredentialsUsername(@Param("credentials.username") String username);
+  
+  Optional<User> findByCredentialsUsername(String username);
 
 //  @Query(value = "SELECT u FROM #{#entityName} u WHERE u.credentials.username =?1 AND u.deleted = true")
 //  boolean existsByUsernameAndDeletedTrue(String username);
