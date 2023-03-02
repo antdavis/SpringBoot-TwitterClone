@@ -26,6 +26,7 @@ public class UserServiceImpl implements UserService {
   private final UserMapper userMapper;
 //  private final CredentialsMapper credentialsMapper;
 
+  // Get all active (non-deleted) users as an array
   @Override
   public List<UserResponseDto> getAllUsers() {
     return userMapper.entitiesToDtos(userRepository.findAllByDeletedFalse());
