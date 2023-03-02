@@ -59,6 +59,5 @@ public class HashtagServiceImpl implements HashtagService {
       }
       return tweetMapper.entitiesToDtos(tweetsToReturn);
   }
-  }
+ }
 
-}
