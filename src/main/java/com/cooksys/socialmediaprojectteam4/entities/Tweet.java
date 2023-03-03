@@ -1,11 +1,13 @@
 package com.cooksys.socialmediaprojectteam4.entities;
 
 import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.springframework.data.annotation.CreatedDate;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -70,7 +72,7 @@ public class Tweet implements Comparable<Tweet> {
   @EqualsAndHashCode.Exclude
   @ManyToMany
   @JoinTable(name = "tweet_hashtags", joinColumns = @JoinColumn(name = "tweet_id"), inverseJoinColumns = @JoinColumn(name = "hashtag_id"))
-  private Set<Hashtag> hashtags;
+  private List<Hashtag> hashtags = new ArrayList<>();
 
 //	Sorts tweets based on their id values with the higher id values appearing first.
   @Override

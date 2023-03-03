@@ -122,6 +122,8 @@ public class TweetServiceImpl implements TweetService {
 	}
 	
 	public void registerMentions(Tweet tweet) {
+//		filterData is helper function above
+//		Returns list of usernames mentioned in the tweet by using @ to find usernames
 		for (String string : filterData(tweet.getContent(), "@")) {
 			Optional<User> optionalUser = userRepository.findByCredentialsUsername(string);
 			if (!optionalUser.isEmpty()) {
@@ -212,15 +214,23 @@ public class TweetServiceImpl implements TweetService {
 
 	@Override
 	public TweetResponseDto retweet(Long id, CredentialsDto credentialsDto) {
-		// TODO Auto-generated method stub
-		return null;
+		Tweet tweetToRetweet = getTweet(id);
+		Tweet tweetToSave = new Tweet();
+		validateCredentials(userService.getUserByUsernameReturnUserEntity(credentialsDto.getUsername()),credentialsDto);
+		
+		tweetToSave.setAuthor(userService.getUserByUsernameReturnUserEntity(credentialsDto.getUsername()));
+		tweetToSave.setContent(tweetToRetweet.getContent());
+		tweetToSave.setRepostOf(tweetToRetweet);
+		tweetToSave.setTimePosted(Timestamp.valueOf(LocalDateTime.now()));
+		tweetToRetweet.getReposts().add(tweetRepository.saveAndFlush(tweetToSave));
+		tweetRepository.saveAndFlush(tweetToRetweet);
+		
+		return tweetMapper.entityToDto(tweetRepository.saveAndFlush(tweetToRetweet));
 	}
 
 	@Override
 	public List<HashtagDto> getTweetHashtags(Long id) {
-	    Set<Hashtag> hashtags = getTweet(id).getHashtags();
-	    List<Hashtag> hashtagList = new ArrayList<>(hashtags);
-	    return hashtagMapper.entitiesToDtos(hashtagList);
+		return hashtagMapper.entitiesToDtos(getTweet(id).getHashtags());
 	}
 
 	@Override
