@@ -65,7 +65,7 @@ public class UserServiceImpl implements UserService {
   }
 
   public void checkProfile(ProfileDto profileDto) {
-    if (profileDto == null || profileDto.getEmail() == null)
+    if (profileDto == null)// || profileDto.getEmail() == null)
       throw new BadRequestException("Profile missing!");
   }
 
@@ -120,10 +120,16 @@ public class UserServiceImpl implements UserService {
   @Override
   public UserResponseDto updateUserProfile(UserRequestDto userRequestDto, String username) {
     validateUserRequest(userRequestDto);
-    User userToUpdate = getUser(userMapper.userRequestDtoToEntity(userRequestDto).getCredentials().getUsername());
+    User userToUpdate = getUser(username);
 
     validateCredentials(userRequestDto.getCredentials(), userToUpdate);
-    userToUpdate.getCredentials().setUsername(username);
+    if(userRequestDto.getProfile().getFirstName() != null)
+      userToUpdate.getProfile().setFirstName(userRequestDto.getProfile().getFirstName());
+    if(userRequestDto.getProfile().getLastName() != null)
+      userToUpdate.getProfile().setLastName(userRequestDto.getProfile().getLastName());
+    if(userRequestDto.getProfile().getPhone() != null)
+      userToUpdate.getProfile().setPhone(userRequestDto.getProfile().getPhone());
+    
     return userMapper.userEntityToDto(userRepository.saveAndFlush(userToUpdate));
   }
 
