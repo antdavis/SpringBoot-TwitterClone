@@ -259,8 +259,10 @@ public class TweetServiceImpl implements TweetService {
 
 	@Override
 	public List<TweetResponseDto> getTweetReplies(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Tweet> replies = getTweet(id).getReplies();
+		Collections.sort(replies);
+		replies.removeIf(Tweet::isDeleted);
+		return tweetMapper.entitiesToDtos(replies);
 	}
 
 	@Override
@@ -276,8 +278,7 @@ public class TweetServiceImpl implements TweetService {
 
 	@Override
 	public List<UserResponseDto> getTweetUsersMentioned(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		return userMapper.entitiesToDtos(getTweet(id).getMentionedUsers());
 	}
 
 }
