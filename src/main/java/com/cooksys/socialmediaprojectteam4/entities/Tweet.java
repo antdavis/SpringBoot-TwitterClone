@@ -35,7 +35,7 @@ public class Tweet implements Comparable<Tweet> {
   private User author;
 
   @CreationTimestamp
-  private Timestamp posted;
+  private Timestamp timePosted;
 
   private boolean deleted = false;
 
