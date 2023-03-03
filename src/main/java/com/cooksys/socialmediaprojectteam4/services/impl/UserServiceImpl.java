@@ -106,7 +106,7 @@ public class UserServiceImpl implements UserService {
 
     }
 
-    return userMapper.userEntityToDto(temp.get());
+    return userMapper.userEntityToDto(userRepository.saveAndFlush(temp.get()));
 
   }
 
@@ -224,14 +224,17 @@ public class UserServiceImpl implements UserService {
     User user = getUser(username);
     List<Tweet> tweets = new ArrayList<>();
 
-    user.getTweets().forEach(t -> {
-      tweets.add(t);
-      tweets.addAll(t.getReplies());
-      tweets.addAll(new ArrayList<>(t.getReposts()));
-    });
+    if (!user.getTweets().isEmpty()) {
+      user.getTweets().forEach(t -> {
+        tweets.add(t);
+        tweets.addAll(t.getReplies());
+        tweets.addAll(new ArrayList<>(t.getReposts()));
+      });
 
-    Collections.sort(tweets);
-    Collections.reverse(tweets);
+      Collections.sort(tweets);
+      Collections.reverse(tweets);
+    }
+    
     return tweetMapper.entitiesToDtos(tweets);
   }
 
