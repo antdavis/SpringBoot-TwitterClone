@@ -154,10 +154,12 @@ public class UserServiceImpl implements UserService {
     User userFollower = getUser(credentialsDto.getUsername());
     validateCredentials(credentialsDto, userFollower);
     User userToFollow = getUser(username);
-    if (userFollower.getFollower().contains(userToFollow))
-      throw new NotAuthorizedException("Already following.");
-    userFollower.getFollower().add(userToFollow);
-    userRepository.saveAndFlush(userFollower);
+    if (userFollower.getFollowing().contains(userToFollow))
+      throw new BadRequestException("Already following.");
+    userFollower.getFollowing().add(userToFollow);
+    userToFollow.getFollower().add(userFollower);
+    userRepository.save(userToFollow);
+    userRepository.save(userFollower);
 
   }
 
@@ -167,26 +169,28 @@ public class UserServiceImpl implements UserService {
     User userFollower = getUser(credentialsDto.getUsername());
     validateCredentials(credentialsDto, userFollower);
     User userToUnfollow = getUser(username);
-    if (userFollower.getFollower().contains(userToUnfollow))
-      throw new NotAuthorizedException("Already following.");
-    userFollower.getFollower().remove(userToUnfollow);
-    userRepository.saveAndFlush(userFollower);
+    if (!userFollower.getFollowing().contains(userToUnfollow))
+      throw new BadRequestException("Already not following.");
+    userFollower.getFollowing().remove(userToUnfollow);
+    userToUnfollow.getFollower().remove(userFollower);
+    userRepository.save(userFollower);
+    userRepository.save(userFollower);
 
   }
 
   @Override
   public List<UserResponseDto> getUserFollowing(String username) {
     User user = getUser(username);
-    if (user.getFollowing().isEmpty())
-      throw new NotFoundException("Not following anyone.");
+//    if (!user.getFollowing().isEmpty())
+//      throw new NotFoundException("Not following anyone.");
     return userMapper.entitiesToDtos(new ArrayList<User>(user.getFollowing()));
   }
 
   @Override
   public List<UserResponseDto> getUserFollowers(String username) {
     User user = getUser(username);
-    if (user.getFollower().isEmpty())
-      throw new NotFoundException("Not following anyone.");
+//    if (user.getFollower().isEmpty())
+//      throw new NotFoundException("Not following anyone.");
     return userMapper.entitiesToDtos(new ArrayList<User>(user.getFollower()));
   }
 
