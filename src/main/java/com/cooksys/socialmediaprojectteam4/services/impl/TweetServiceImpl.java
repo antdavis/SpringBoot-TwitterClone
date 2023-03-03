@@ -216,7 +216,7 @@ public class TweetServiceImpl implements TweetService {
     tweetToSave.setAuthor(userService.getUserByUsernameReturnUserEntity(credentialsDto.getUsername()));
     tweetToSave.setContent(tweetToRetweet.getContent());
     tweetToSave.setRepostOf(tweetToRetweet);
-    tweetToSave.setTimePosted(Timestamp.valueOf(LocalDateTime.now()));
+    tweetToSave.setPosted(Timestamp.valueOf(LocalDateTime.now()));
     tweetToRetweet.getReposts().add(tweetRepository.saveAndFlush(tweetToSave));
     tweetRepository.saveAndFlush(tweetToRetweet);
 
