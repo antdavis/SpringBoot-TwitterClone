@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cooksys.socialmediaprojectteam4.dtos.CredentialsDto;
+import com.cooksys.socialmediaprojectteam4.dtos.TweetResponseDto;
 import com.cooksys.socialmediaprojectteam4.dtos.UserRequestDto;
 import com.cooksys.socialmediaprojectteam4.dtos.UserResponseDto;
 import com.cooksys.socialmediaprojectteam4.services.UserService;
@@ -64,20 +65,28 @@ public class UserController {
     userService.unfollowUser(credentialsDto, username);
   }
 
-//@GetMapping("/@{username}/feed")
-//public TweetResponseDto userFeed(@RequestBody UserRequestDto userRequestDto)
-//
-//TweetResponseDto getAllTweetsByUser(String userName);
-//
-//TweetResponseDto getAllTweetsMentionUser(String userName);
-//
+  @GetMapping("/@{username}/feed")
+  public List<TweetResponseDto> userFeed(@PathVariable String username) {
+    return userService.userFeed(username);
+  }
+
+  @GetMapping("/@{username}/tweets")
+  public List<TweetResponseDto> getAllTweetsByUser(String username) {
+    return userService.getAllTweetsByUser(username);
+  }
+
+  @GetMapping("/@{username}/mentions")
+  public List<TweetResponseDto> getAllTweetsMentionUser(String username) {
+    return userService.getAllTweetsMentionUser(username);
+  }
+
   @GetMapping("/@{username}/followers")
-  public List<UserResponseDto> getUserFollowers(String username) {
+  public List<UserResponseDto> getUserFollowers(@PathVariable String username) {
     return userService.getUserFollowers(username);
   }
 
   @GetMapping("/@{username}/following")
-  public List<UserResponseDto> getUserFollowings(String username) {
+  public List<UserResponseDto> getUserFollowings(@PathVariable String username) {
     return userService.getUserFollowing(username);
   }
 }

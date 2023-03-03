@@ -1,6 +1,7 @@
 package com.cooksys.socialmediaprojectteam4.services.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,12 +9,15 @@ import org.springframework.stereotype.Service;
 
 import com.cooksys.socialmediaprojectteam4.dtos.CredentialsDto;
 import com.cooksys.socialmediaprojectteam4.dtos.ProfileDto;
+import com.cooksys.socialmediaprojectteam4.dtos.TweetResponseDto;
 import com.cooksys.socialmediaprojectteam4.dtos.UserRequestDto;
 import com.cooksys.socialmediaprojectteam4.dtos.UserResponseDto;
+import com.cooksys.socialmediaprojectteam4.entities.Tweet;
 import com.cooksys.socialmediaprojectteam4.entities.User;
 import com.cooksys.socialmediaprojectteam4.exceptions.BadRequestException;
 import com.cooksys.socialmediaprojectteam4.exceptions.NotAuthorizedException;
 import com.cooksys.socialmediaprojectteam4.exceptions.NotFoundException;
+import com.cooksys.socialmediaprojectteam4.mappers.TweetMapper;
 import com.cooksys.socialmediaprojectteam4.mappers.UserMapper;
 import com.cooksys.socialmediaprojectteam4.repositories.UserRepository;
 import com.cooksys.socialmediaprojectteam4.services.UserService;
@@ -27,6 +31,7 @@ public class UserServiceImpl implements UserService {
   private final UserRepository userRepository;
 
   private final UserMapper userMapper;
+  private final TweetMapper tweetMapper;
 //  private final CredentialsMapper credentialsMapper;
 
   // get the user from db if exists
@@ -167,6 +172,57 @@ public class UserServiceImpl implements UserService {
     if (user.getFollower().isEmpty())
       throw new NotFoundException("Not following anyone.");
     return userMapper.entitiesToDtos(new ArrayList<User>(user.getFollower()));
+  }
+
+  @Override
+  public List<TweetResponseDto> userFeed(String username) {
+    User user = getUser(username);
+    List<Tweet> feed = new ArrayList<>();
+
+    user.getTweets().forEach(t -> {
+      feed.add(t);
+      feed.addAll(t.getReplies());
+      feed.addAll(new ArrayList<>(t.getReposts()));
+    });
+
+    for (User e : user.getFollowing()) {
+      e.getTweets().forEach(t -> {
+        feed.add(t);
+        feed.addAll(t.getReplies());
+        feed.addAll(new ArrayList<>(t.getReposts()));
+      });
+
+    }
+
+    Collections.sort(feed);
+    Collections.reverse(feed);
+    return tweetMapper.entitiesToDtos(feed);
+  }
+
+  @Override
+  public List<TweetResponseDto> getAllTweetsByUser(String username) {
+    User user = getUser(username);
+    List<Tweet> tweets = new ArrayList<>();
+
+    user.getTweets().forEach(t -> {
+      tweets.add(t);
+      tweets.addAll(t.getReplies());
+      tweets.addAll(new ArrayList<>(t.getReposts()));
+    });
+
+    Collections.sort(tweets);
+    Collections.reverse(tweets);
+    return tweetMapper.entitiesToDtos(tweets);
+  }
+
+  @Override
+  public List<TweetResponseDto> getAllTweetsMentionUser(String username) {
+    User user = getUser(username);
+    List<Tweet> mentions = new ArrayList<>(user.getUserMentions());
+
+    Collections.sort(mentions);
+    Collections.reverse(mentions);
+    return tweetMapper.entitiesToDtos(mentions);
   }
 
 }
