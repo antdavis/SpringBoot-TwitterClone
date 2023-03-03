@@ -218,7 +218,6 @@ public class TweetServiceImpl implements TweetService {
     tweetToSave.setRepostOf(tweetToRetweet);
     tweetToSave.setPosted(Timestamp.valueOf(LocalDateTime.now()));
     tweetToRetweet.getReposts().add(tweetRepository.saveAndFlush(tweetToSave));
-    tweetRepository.saveAndFlush(tweetToRetweet);
 
     return tweetMapper.entityToDto(tweetRepository.saveAndFlush(tweetToRetweet));
   }
