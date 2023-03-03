@@ -1,6 +1,5 @@
 package com.cooksys.socialmediaprojectteam4.controllers.advice;
 
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -10,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.cooksys.socialmediaprojectteam4.dtos.ErrorDto;
 import com.cooksys.socialmediaprojectteam4.exceptions.BadRequestException;
 import com.cooksys.socialmediaprojectteam4.exceptions.NotAuthorizedException;
+import com.cooksys.socialmediaprojectteam4.exceptions.NotFoundException;
 
 @ControllerAdvice(basePackages = { "com.cooksys.socialmediaprojectteam4.controllers" })
 @ResponseBody

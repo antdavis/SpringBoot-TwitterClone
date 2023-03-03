@@ -23,7 +23,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 //  boolean existsByUsernameAndDeletedTrue(String username);
   
   @Query(value = "SELECT u FROM #{#entityName} u WHERE u.credentials.username =?1 AND u.deleted = false")
-  Optional<User> findByUsername(String username);
+  Optional<User> findByUsernameAndDeleted(String username);
 
 //  User findByCredentialsUsernameAndDeletedFalse(@Param("credentials.username") String username);
 

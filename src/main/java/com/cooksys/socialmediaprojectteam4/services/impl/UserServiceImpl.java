@@ -36,9 +36,9 @@ public class UserServiceImpl implements UserService {
 
   // get the user from db if exists
   public User getUser(String username) {
-    Optional<User> optionalUser = userRepository.findByUsername(username);
+    Optional<User> optionalUser = userRepository.findByUsernameAndDeleted(username);
     if (optionalUser.isEmpty())
-      throw new NotFoundException("User doesn't exist.");
+      throw new NotFoundException("User with username: " + username + " not found!");
 
     return optionalUser.get();
   }
@@ -47,6 +47,7 @@ public class UserServiceImpl implements UserService {
     return getUserByUsernameReturnUserEntity(credentialsDto.getUsername());
   }
 
+  //  QUESTIONG ON THE .ISDELTED()
   public User getUserByUsernameReturnUserEntity(String username) {
     Optional<User> optionalUser = userRepository.findByCredentialsUsername(username);
     if (optionalUser.isEmpty() || optionalUser.get().isDeleted()) {
@@ -55,6 +56,34 @@ public class UserServiceImpl implements UserService {
     return optionalUser.get();
   }
 
+  // validate the credentials of the user
+  public void validateCredentials(CredentialsDto credentialsDto, User userToDelete) {
+    if (!userToDelete.getCredentials().getUsername().equalsIgnoreCase(credentialsDto.getUsername())
+        || userToDelete.getCredentials().getPassword().equalsIgnoreCase(credentialsDto.getPassword())) {
+      throw new NotAuthorizedException("Credentials do not match!");
+    }
+  }
+
+  public void checkProfile(ProfileDto profileDto) {
+    if (profileDto == null || profileDto.getEmail() == null)
+      throw new BadRequestException("Profile missing!");
+  }
+
+  private void validateUserRequest(UserRequestDto userRequestDto) {
+    if (userRequestDto == null)
+      throw new BadRequestException("Invalid user request.");
+    checkCredentials(userRequestDto.getCredentials());
+    checkProfile(userRequestDto.getProfile());
+
+  }
+
+  // validate the credentials of the user
+  public void checkCredentials(CredentialsDto credentialsDto) {
+    if (credentialsDto == null || credentialsDto.getUsername() == null || credentialsDto.getPassword() == null)
+      throw new BadRequestException("Credentials missing!");
+  }
+
+  
   // Get all active (non-deleted) users as an array
   @Override
   public List<UserResponseDto> getAllUsers() {
@@ -80,33 +109,8 @@ public class UserServiceImpl implements UserService {
     return userMapper.userEntityToDto(userRepository.saveAndFlush(user));
   }
 
-  // validate the credentials of the user
-  public void validateCredentials(CredentialsDto credentialsDto, User userToDelete) {
-    if (!userToDelete.getCredentials().getUsername().equalsIgnoreCase(credentialsDto.getUsername())) {
-      throw new NotAuthorizedException("Credentials do not match!");
-    }
-  }
-
-  public void checkProfile(ProfileDto profileDto) {
-    if (profileDto == null || profileDto.getEmail() == null)
-      throw new BadRequestException("Profile missing!");
-  }
-
-  private void validateUserRequest(UserRequestDto userRequestDto) {
-    if (userRequestDto == null)
-      throw new BadRequestException("Invalid user request.");
-    checkCredentials(userRequestDto.getCredentials());
-    checkProfile(userRequestDto.getProfile());
-
-  }
-
-  // validate the credentials of the user
-  public void checkCredentials(CredentialsDto credentialsDto) {
-    if (credentialsDto == null || credentialsDto.getUsername() == null || credentialsDto.getPassword() == null)
-      throw new BadRequestException("Credentials missing!");
-  }
-
-  // get us
+  
+  // get user by username
   @Override
   public UserResponseDto getUserByUsername(String username) {
     User user = getUser(username);
