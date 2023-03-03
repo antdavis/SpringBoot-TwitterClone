@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
     return getUserByUsernameReturnUserEntity(credentialsDto.getUsername());
   }
 
-  //  QUESTIONG ON THE .ISDELTED()
+  // QUESTIONG ON THE .ISDELTED()
   public User getUserByUsernameReturnUserEntity(String username) {
     Optional<User> optionalUser = userRepository.findByCredentialsUsername(username);
     if (optionalUser.isEmpty() || optionalUser.get().isDeleted()) {
@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
   // validate the credentials of the user
   public void validateCredentials(CredentialsDto credentialsDto, User userToDelete) {
     if (!userToDelete.getCredentials().getUsername().equalsIgnoreCase(credentialsDto.getUsername())
-        || userToDelete.getCredentials().getPassword().equalsIgnoreCase(credentialsDto.getPassword())) {
+        || !userToDelete.getCredentials().getPassword().equalsIgnoreCase(credentialsDto.getPassword())) {
       throw new NotAuthorizedException("Credentials do not match!");
     }
   }
@@ -83,7 +83,6 @@ public class UserServiceImpl implements UserService {
       throw new BadRequestException("Credentials missing!");
   }
 
-  
   // Get all active (non-deleted) users as an array
   @Override
   public List<UserResponseDto> getAllUsers() {
@@ -95,21 +94,22 @@ public class UserServiceImpl implements UserService {
   public UserResponseDto createUser(UserRequestDto userRequestDto) {
     validateUserRequest(userRequestDto);
     User user = userMapper.userRequestDtoToEntity(userRequestDto);
-    if (userRepository.existsByCredentialsUsername(user.getCredentials().getUsername())) {
-      validateCredentials(userRequestDto.getCredentials(), user);
-//      if(user.isDeleted()) {
-      user.setDeleted(false);
-//      }
-//      else
-      throw new NotAuthorizedException("Don't have authorization");
-    }
-//    user.setCredentials(user.getProfile());
-//    user.setProfile(user.getProfile());
 
-    return userMapper.userEntityToDto(userRepository.saveAndFlush(user));
+    Optional<User> temp = userRepository.findByCredentialsUsername(user.getCredentials().getUsername());
+    if (temp.isEmpty())
+      temp = Optional.of(userRepository.saveAndFlush(user));
+    else {
+      if (!temp.get().isDeleted()) {
+        throw new BadRequestException("Username already taken!");
+      } else
+        temp.get().setDeleted(false);
+
+    }
+
+    return userMapper.userEntityToDto(temp.get());
+
   }
 
-  
   // get user by username
   @Override
   public UserResponseDto getUserByUsername(String username) {
@@ -120,9 +120,9 @@ public class UserServiceImpl implements UserService {
   @Override
   public UserResponseDto updateUserProfile(UserRequestDto userRequestDto, String username) {
     validateUserRequest(userRequestDto);
-    User userToUpdate = userMapper.userRequestDtoToEntity(userRequestDto);
+    User userToUpdate = getUser(userMapper.userRequestDtoToEntity(userRequestDto).getCredentials().getUsername());
 
-//    validateCredentials(credentialsDto, userToUpdate);
+    validateCredentials(userRequestDto.getCredentials(), userToUpdate);
     userToUpdate.getCredentials().setUsername(username);
     return userMapper.userEntityToDto(userRepository.saveAndFlush(userToUpdate));
   }
