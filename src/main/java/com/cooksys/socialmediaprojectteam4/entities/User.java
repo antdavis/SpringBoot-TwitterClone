@@ -24,6 +24,8 @@ import lombok.NoArgsConstructor;
 @Table(name = "user_table")
 @NoArgsConstructor
 @Data
+//@FilterDef(name = "deletedUserFilter", parameters = @ParamDef(name = "isDeleted", type = org.hibernate.type.descriptor.java.BooleanJavaType.class))
+//@Filter(name = "deletedUserFilter", condition = "deleted = :isDeleted")
 public class User {
 
   @Id
@@ -36,7 +38,8 @@ public class User {
   @CreationTimestamp
   private Timestamp joined;
 
-  private boolean deleted = false;
+//  private boolean deleted = Boolean.FALSE;
+  private boolean deleted = Boolean.FALSE;
 
   @Embedded
   private Profile profile;
