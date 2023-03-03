@@ -52,18 +52,32 @@ public class UserController {
   public UserResponseDto deleteUser(@RequestBody CredentialsDto credentialsDto, @PathVariable String username) {
     return userService.deleteUser(credentialsDto, username);
   }
-//
-//Optional<UserResponseDto> followUser(String userName, CredentialsDto credentialsDto);
-//
-//Optional<UserResponseDto> unfollowUser(String userName, CredentialsDto credentialsDto);
-//
-//TweetResponseDto userFeed(String userName);
+
+  @PostMapping("/@{username}/follow")
+  @ResponseStatus(HttpStatus.CREATED)
+  public void followUser(@RequestBody CredentialsDto credentialsDto, @PathVariable String username) {
+    userService.followUser(credentialsDto, username);
+  }
+
+  @PostMapping("/@{username}/unfollow")
+  public void unfollowUser(@RequestBody CredentialsDto credentialsDto, @PathVariable String username) {
+    userService.unfollowUser(credentialsDto, username);
+  }
+
+//@GetMapping("/@{username}/feed")
+//public TweetResponseDto userFeed(@RequestBody UserRequestDto userRequestDto)
 //
 //TweetResponseDto getAllTweetsByUser(String userName);
 //
 //TweetResponseDto getAllTweetsMentionUser(String userName);
 //
-//List<UserResponseDto> getUserFollowers(String userName);
-//
-//List<UserResponseDto> getUserFollowings(String userName);
+  @GetMapping("/@{username}/followers")
+  public List<UserResponseDto> getUserFollowers(String username) {
+    return userService.getUserFollowers(username);
+  }
+
+  @GetMapping("/@{username}/following")
+  public List<UserResponseDto> getUserFollowings(String username) {
+    return userService.getUserFollowing(username);
+  }
 }

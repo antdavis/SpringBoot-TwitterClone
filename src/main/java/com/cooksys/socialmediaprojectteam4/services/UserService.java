@@ -18,4 +18,12 @@ public interface UserService {
 
   UserResponseDto deleteUser(CredentialsDto credentialsDto, String username);
 
+  void followUser(CredentialsDto credentialsDto, String username);
+
+  List<UserResponseDto> getUserFollowing(String username);
+
+  List<UserResponseDto> getUserFollowers(String username);
+
+  void unfollowUser(CredentialsDto credentialsDto, String username);
+
 }
