@@ -1,5 +1,6 @@
 package com.cooksys.socialmediaprojectteam4.services.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -124,6 +125,48 @@ public class UserServiceImpl implements UserService {
     validateCredentials(credentialsDto, userToDelete);
     userToDelete.setDeleted(true);
     return userMapper.userEntityToDto(userRepository.saveAndFlush(userToDelete));
+  }
+
+  @Override
+  public void followUser(CredentialsDto credentialsDto, String username) {
+    checkCredentials(credentialsDto);
+    User userFollower = getUser(credentialsDto.getUsername());
+    validateCredentials(credentialsDto, userFollower);
+    User userToFollow = getUser(username);
+    if (userFollower.getFollower().contains(userToFollow))
+      throw new NotAuthorizedException("Already following.");
+    userFollower.getFollower().add(userToFollow);
+    userRepository.saveAndFlush(userFollower);
+
+  }
+
+  @Override
+  public void unfollowUser(CredentialsDto credentialsDto, String username) {
+    checkCredentials(credentialsDto);
+    User userFollower = getUser(credentialsDto.getUsername());
+    validateCredentials(credentialsDto, userFollower);
+    User userToUnfollow = getUser(username);
+    if (userFollower.getFollower().contains(userToUnfollow))
+      throw new NotAuthorizedException("Already following.");
+    userFollower.getFollower().remove(userToUnfollow);
+    userRepository.saveAndFlush(userFollower);
+
+  }
+
+  @Override
+  public List<UserResponseDto> getUserFollowing(String username) {
+    User user = getUser(username);
+    if (user.getFollowing().isEmpty())
+      throw new NotFoundException("Not following anyone.");
+    return userMapper.entitiesToDtos(new ArrayList<User>(user.getFollowing()));
+  }
+
+  @Override
+  public List<UserResponseDto> getUserFollowers(String username) {
+    User user = getUser(username);
+    if (user.getFollower().isEmpty())
+      throw new NotFoundException("Not following anyone.");
+    return userMapper.entitiesToDtos(new ArrayList<User>(user.getFollower()));
   }
 
 }
