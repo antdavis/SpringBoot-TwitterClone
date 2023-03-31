@@ -55,7 +55,7 @@ public class Tweet implements Comparable<Tweet> {
   private Tweet repostOf;
 
   @OneToMany(mappedBy = "repostOf")
-  private Set<Tweet> reposts;
+  private List<Tweet> reposts;
 
   // setting up relationship with User for user_mentions
   @ManyToMany(mappedBy = "userMentions")
